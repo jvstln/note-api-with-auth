@@ -13,5 +13,8 @@ const noteSchema = new mongoose_1.Schema({
     author: {
         type: String,
     },
+}, {
+    timestamps: true,
 });
-exports.default = (0, mongoose_1.model)("Note", noteSchema);
+const Note = (0, mongoose_1.model)("Note", noteSchema);
+exports.default = Note;

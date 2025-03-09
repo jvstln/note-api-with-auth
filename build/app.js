@@ -5,15 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const cors_1 = __importDefault(require("cors"));
 const utils_1 = require("./utils");
 const note_controller_1 = __importDefault(require("./note.controller"));
 // Get environmental variables
 dotenv_1.default.config();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 const DATABASE_URL = process.env.DATABASE_URL || "";
 const app = (0, express_1.default)();
 // Middlewares
-// app.use(express.json());
+app.use(express_1.default.json());
+app.use((0, cors_1.default)());
 // Notes route
 const note = new note_controller_1.default();
 app.get("/api/notes", note.getNotes);
@@ -24,6 +26,6 @@ app.patch("/api/notes/:id", note.updateNote);
 // Connect to database and then, start the server
 (0, utils_1.connectToDatabase)(DATABASE_URL)
     .then(() => {
-    app.listen(PORT, () => console.log(`Listening at ${PORT}`));
+    app.listen(PORT, () => console.log(`Note API listening at port ${PORT}`));
 })
     .catch((error) => console.log("Error connecting to database", error));
