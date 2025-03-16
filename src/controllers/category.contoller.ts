@@ -32,7 +32,7 @@ class CategoryController {
   async createCategory(req: Request, res: Response) {
     try {
       const categoryExists = await CategoryService.exists(
-        req.body.name.toLowerCase()
+        req.body.name?.toLowerCase()
       );
 
       if (categoryExists) {

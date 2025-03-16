@@ -14,6 +14,8 @@ const noteSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      min: 3,
+      max: 75,
     },
     content: {
       type: String,

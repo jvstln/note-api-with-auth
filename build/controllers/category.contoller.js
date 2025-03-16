@@ -47,7 +47,12 @@ class CategoryController {
     }
     createCategory(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             try {
+                const categoryExists = yield category_service_1.default.exists((_a = req.body.name) === null || _a === void 0 ? void 0 : _a.toLowerCase());
+                if (categoryExists) {
+                    throw new errors_1.HTTPError(409, "Category already exists");
+                }
                 const createdCategory = yield category_service_1.default.createCategory(req.body);
                 res.json({
                     succes: true,
