@@ -1,8 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+
+import indexRoute from "./routes/index.route";
 import { connectToDatabase } from "./utils";
-import NoteController from "./note.controller";
 
 // Get environmental variables
 dotenv.config();
@@ -15,13 +16,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Notes route
-const note = new NoteController();
-app.get("/api/notes", note.getNotes);
-app.get("/api/notes/:id", note.getNote);
-app.post("/api/notes", note.createNote);
-app.delete("/api/notes/:id", note.deleteNote);
-app.patch("/api/notes/:id", note.updateNote);
+// Routes
+app.use("/api", indexRoute);
 
 // Connect to database and then, start the server
 connectToDatabase(DATABASE_URL)
