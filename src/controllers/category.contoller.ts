@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import CategoryService from "../services/category.service";
-import { handleError, HTTPError } from "../utils";
+import { handleError, HTTPError } from "../utils/errors";
 
 class CategoryController {
   async getCategories(req: Request, res: Response) {
@@ -31,6 +31,14 @@ class CategoryController {
 
   async createCategory(req: Request, res: Response) {
     try {
+      const categoryExists = await CategoryService.exists(
+        req.body.name.toLowerCase()
+      );
+
+      if (categoryExists) {
+        throw new HTTPError(409, "Category already exists");
+      }
+
       const createdCategory = await CategoryService.createCategory(req.body);
       res.json({
         succes: true,

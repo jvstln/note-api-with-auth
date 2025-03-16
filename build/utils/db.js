@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleSuccess = exports.handleError = exports.HTTPError = exports.connectToDatabase = void 0;
+exports.connectToDatabase = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const connectToDatabase = (databaseUrl) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Connecting to database...");
@@ -20,23 +20,3 @@ const connectToDatabase = (databaseUrl) => __awaiter(void 0, void 0, void 0, fun
     console.log("Connected to database successfully");
 });
 exports.connectToDatabase = connectToDatabase;
-class HTTPError extends Error {
-    constructor(code, message) {
-        super(message);
-        this.code = code;
-    }
-}
-exports.HTTPError = HTTPError;
-const handleError = (res, error, defaultError) => {
-    const errorCode = error instanceof HTTPError ? error.code : 500;
-    const message = error instanceof Error ? error.message : defaultError;
-    res.status(errorCode).json({
-        message,
-        success: false,
-    });
-};
-exports.handleError = handleError;
-const handleSuccess = (res, message, data) => {
-    res.json({ message, data, success: true });
-};
-exports.handleSuccess = handleSuccess;

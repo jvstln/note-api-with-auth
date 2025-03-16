@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import indexRoute from "./routes/index.route";
-import { connectToDatabase } from "./utils";
+import { connectToDatabase } from "./utils/db";
 import { requestLogger } from "./middleware/request-logger.middleware";
 
 // Get environmental variables
