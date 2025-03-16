@@ -1,13 +1,16 @@
 # Note Taking API
 
-A simple RESTful API for managing notes built with Express.js, TypeScript, and MongoDB.
+A RESTful API for managing notes and categories built with Express.js, TypeScript, and MongoDB.
 
 ## Features
 
 - Create, read, update, and delete notes
+- Organize notes with categories
 - MongoDB database integration
 - TypeScript support
-- Error handling
+- Request validation middleware
+- Comprehensive error handling
+- Request logger middleware
 
 ## Prerequisites
 
@@ -26,7 +29,7 @@ git clone <repository-url>
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Create a `.env` file in the root directory and add your MongoDB connection string:
@@ -40,20 +43,31 @@ DATABASE_URL=your_mongodb_connection_string
 To start the development server with hot-reload:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
-The server will start on port 5000 by default. You can change this by setting the `PORT` environment variable.
+The server will start on port 8080 by default. You can change this by setting the `PORT` environment variable.
 
 ## API Endpoints
 
-| Method | Endpoint         | Description         |
-| ------ | ---------------- | ------------------- |
-| GET    | `/api/notes`     | Get all notes       |
-| GET    | `/api/notes/:id` | Get a specific note |
-| POST   | `/api/notes`     | Create a new note   |
-| PATCH  | `/api/notes/:id` | Update a note       |
-| DELETE | `/api/notes/:id` | Delete a note       |
+### Notes
+
+| Method | Endpoint                          | Description           |
+| ------ | --------------------------------- | --------------------- |
+| GET    | `/api/notes`                      | Get all notes         |
+| GET    | `/api/notes/:noteId`              | Get a specific note   |
+| GET    | `/api/notes/category/:categoryId` | Get notes by category |
+| POST   | `/api/notes`                      | Create a new note     |
+| PATCH  | `/api/notes/:noteId`              | Update a note         |
+| DELETE | `/api/notes/:noteId`              | Delete a note         |
+
+### Categories
+
+| Method | Endpoint                      | Description             |
+| ------ | ----------------------------- | ----------------------- |
+| GET    | `/api/categories`             | Get all categories      |
+| GET    | `/api/categories/:categoryId` | Get a specific category |
+| POST   | `/api/categories`             | Create a new category   |
 
 ### Note Schema
 
@@ -61,7 +75,17 @@ The server will start on port 5000 by default. You can change this by setting th
 {
   title: string; // required
   content: string; // required
+  category: string; // optional, references a category ID
   author: string; // optional
+}
+```
+
+### Category Schema
+
+```typescript
+{
+  name: string; // required, unique
+  description: string; // optional
 }
 ```
 
@@ -72,12 +96,37 @@ The project uses TypeScript and compiles to JavaScript in the `build` directory.
 ## Project Structure
 
 ```plaintext
-note-taking-api/
-├── build/              # Compiled typescript files
-├── app.ts              # Application entry point
-├── note.controller.ts  # Note controller logic
-├── note.model.ts       # Note mongoose model
-├── utils.ts           # Utility functions
-├── tsconfig.json      # TypeScript configuration
-└── package.json       # Project dependencies
+simple-note-api/
+├── build/                # Compiled typescript files
+├── src/
+│   ├── app.ts           # Application entry point
+│   ├── controllers/     # Request handlers
+│   ├── middleware/      # Custom middleware
+│   ├── models/         # Database models
+│   ├── routes/         # API routes
+│   ├── services/       # Business logic
+│   └── utils/          # Utility functions
+├── tsconfig.json       # TypeScript configuration
+└── package.json        # Project dependencies
 ```
+
+## Error Handling
+
+The API uses a standardized error response format:
+
+```typescript
+{
+  success: boolean;
+  message: string;
+  data?: any;
+}
+```
+
+Common HTTP status codes:
+
+- 200: Success
+- 201: Created
+- 400: Bad Request
+- 404: Not Found
+- 409: Conflict (e.g., duplicate category)
+- 500: Internal Server Error
