@@ -1,15 +1,26 @@
 import express from "express";
 import NoteController from "../controllers/note.controller";
+import categoryContoller from "../controllers/category.contoller";
 
 const router = express.Router();
 
 // Param middleware to validate note existence if id exists
-router.param("id", NoteController.validateNoteExistence);
+router.param("noteId", NoteController.validateNoteExistence);
+router.use(NoteController.validateAndTransformCategory);
 
 router.get("/", NoteController.getNotes);
-router.get("/:id", NoteController.getNote);
+router.get("/:noteId", NoteController.getNote);
 router.post("/", NoteController.createNote);
-router.delete("/:id", NoteController.deleteNote);
-router.patch("/:id", NoteController.updateNote);
+router.delete("/:noteId", NoteController.deleteNote);
+router.patch("/:noteId", NoteController.updateNote);
+
+// The correct method for updating is patch.. But am leaving it here for task legacy reasons
+router.put("/:noteId", NoteController.updateNote);
+
+router.get(
+  "/categories/:categoryId",
+  categoryContoller.validateCategoryExistence,
+  NoteController.getNotesByCategory
+);
 
 export default router;

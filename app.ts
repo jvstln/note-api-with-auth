@@ -4,6 +4,7 @@ import cors from "cors";
 
 import indexRoute from "./routes/index.route";
 import { connectToDatabase } from "./utils";
+import { requestLogger } from "./middleware/request-logger.middleware";
 
 // Get environmental variables
 dotenv.config();
@@ -13,8 +14,10 @@ const DATABASE_URL = process.env.DATABASE_URL || "";
 const app = express();
 
 // Middlewares
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 // Routes
 app.use("/api", indexRoute);

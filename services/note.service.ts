@@ -1,24 +1,36 @@
 import { NoteModel, type INote } from "../models/note.model";
 
 class NoteService {
-  async getNotes(filter = {}, projector = {}) {
-    return NoteModel.find(filter, projector);
+  async getNotes(filter = {}, projection = {}) {
+    return NoteModel.find(filter, projection).populate(
+      "category",
+      "name description"
+    );
   }
 
   async getNote(id: string) {
-    return NoteModel.findById(id);
+    return NoteModel.findById(id).populate("category", "name description");
   }
 
   async createNote(data: INote) {
-    return NoteModel.create(data);
+    return (await NoteModel.create(data)).populate(
+      "category",
+      "name description"
+    );
   }
 
   async deleteNote(id: string) {
-    return NoteModel.findByIdAndDelete(id);
+    return NoteModel.findByIdAndDelete(id).populate(
+      "category",
+      "name description"
+    );
   }
 
   async updateNote(id: string, data: Partial<INote>) {
-    return NoteModel.findByIdAndUpdate(id, data, { new: true });
+    return NoteModel.findByIdAndUpdate(id, data, { new: true }).populate(
+      "category",
+      "name description"
+    );
   }
 
   async exists(id: string) {

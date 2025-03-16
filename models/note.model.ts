@@ -1,9 +1,11 @@
 import { model, Schema } from "mongoose";
+import { ICategory } from "./category.model";
 
 export interface INote {
   title: string;
   content: string;
   author?: string;
+  category?: ICategory | string;
 }
 
 const noteSchema = new Schema(
@@ -19,6 +21,10 @@ const noteSchema = new Schema(
     },
     author: {
       type: String,
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
     },
   },
   {
