@@ -1,13 +1,17 @@
 import express from "express";
-import notesRoute from "./note.route";
-import categoryRoute from "./category.route";
+import notesRouter from "./note.route";
+import categoryRouter from "./category.route";
+import userRouter from "./user.route";
 
 const router = express.Router();
 
 // Notes routes
-router.use("/notes/", notesRoute);
+router.use("/notes/", notesRouter);
 
 // Categories routes
-router.use("/categories", categoryRoute);
+router.use("/categories", categoryRouter);
+
+// Users routes
+router.use("/users", userRouter);
 
 export default router;

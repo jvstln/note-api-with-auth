@@ -3,16 +3,16 @@ import CategoryContoller from "../controllers/category.contoller";
 import { categorySchema } from "../schemas/category.schema";
 import { createValidationMiddleware } from "../middleware/validation.middleware";
 
-const router = express.Router();
+const categoryRouter = express.Router();
 
-router.param("categoryId", CategoryContoller.validateCategoryExistence);
+categoryRouter.param("categoryId", CategoryContoller.validateCategoryExistence);
 
-router.get("/", CategoryContoller.getCategories);
-router.get("/:categoryId", CategoryContoller.getCategory);
-router.post(
+categoryRouter.get("/", CategoryContoller.getCategories);
+categoryRouter.get("/:categoryId", CategoryContoller.getCategory);
+categoryRouter.post(
   "/",
   createValidationMiddleware(categorySchema),
   CategoryContoller.createCategory
 );
 
-export default router;
+export default categoryRouter;

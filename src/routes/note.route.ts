@@ -4,22 +4,22 @@ import categoryContoller from "../controllers/category.contoller";
 import { createValidationMiddleware } from "../middleware/validation.middleware";
 import { noteSchema, optionalNoteSchema } from "../schemas/note.schema";
 
-const router = express.Router();
+const noteRouter = express.Router();
 
 // Param middleware to validate note existence if id exists
-router.param("noteId", NoteController.validateNoteExistence);
+noteRouter.param("noteId", NoteController.validateNoteExistence);
 // Middleware to validate and transform category from name to _id
-router.use(NoteController.validateAndTransformCategory);
+noteRouter.use(NoteController.validateAndTransformCategory);
 
-router.get("/", NoteController.getNotes);
-router.get("/:noteId", NoteController.getNote);
-router.post(
+noteRouter.get("/", NoteController.getNotes);
+noteRouter.get("/:noteId", NoteController.getNote);
+noteRouter.post(
   "/",
   createValidationMiddleware(noteSchema),
   NoteController.createNote
 );
-router.delete("/:noteId", NoteController.deleteNote);
-router.patch(
+noteRouter.delete("/:noteId", NoteController.deleteNote);
+noteRouter.patch(
   "/:noteId",
 
   createValidationMiddleware(optionalNoteSchema),
@@ -27,16 +27,16 @@ router.patch(
 );
 
 // The correct method for updating is patch.. But am leaving it here for task legacy reasons
-router.put(
+noteRouter.put(
   "/:noteId",
   createValidationMiddleware(optionalNoteSchema),
   NoteController.updateNote
 );
 
-router.get(
+noteRouter.get(
   "/categories/:categoryId",
   categoryContoller.validateCategoryExistence,
   NoteController.getNotesByCategory
 );
 
-export default router;
+export default noteRouter;
