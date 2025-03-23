@@ -12,13 +12,11 @@ userRouter.get("/:userId", UserController.getUser);
 userRouter.post(
   "/",
   createValidationMiddleware(userSchema),
-  UserController.hashPassword,
   UserController.createUser
 );
 userRouter.patch(
   "/:userId",
   createValidationMiddleware(optionalUserSchema),
-  UserController.hashPassword,
   UserController.updateUser
 );
 

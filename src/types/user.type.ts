@@ -13,3 +13,7 @@ export interface UserLogin {
 export interface UserRegister extends UserLogin {
   name: string;
 }
+
+export interface UserDetails extends User {
+  token: string;
+}

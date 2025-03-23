@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTPError } from "../utils/errors";
 import Joi from "joi";
-import { createObjectPath } from "../utils/util";
+import { createObjectPath } from "../utils/utils";
 
 export const createValidationMiddleware = <T>(schema: Joi.ObjectSchema<T>) => {
   return (req: Request, res: Response, next: NextFunction) => {

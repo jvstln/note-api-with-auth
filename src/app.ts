@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import indexRoute from "./routes/index.route";
 import { connectToDatabase } from "./utils/db";
@@ -14,10 +15,11 @@ const DATABASE_URL = process.env.DATABASE_URL || "";
 
 const app = express();
 
-// Middlewares
+// Global Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(requestLogger);
 
 // Routes

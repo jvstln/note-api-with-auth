@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import UserService from "../services/user.service";
 import { HTTPError } from "../utils/errors";
-import bcrypt from "bcrypt";
 
 class UserController {
   async getUsers(req: Request, res: Response) {
@@ -25,7 +24,7 @@ class UserController {
 
   async createUser(req: Request, res: Response) {
     const user = await UserService.createUser(req.body);
-    res.json({
+    res.status(201).json({
       success: true,
       message: "User created successfully",
       data: user,
@@ -56,13 +55,6 @@ class UserController {
       throw new HTTPError(404, "User not found");
     }
 
-    next();
-  }
-
-  async hashPassword(req: Request, res: Response, next: NextFunction) {
-    if ("password" in req.body) {
-      req.body.password = await bcrypt.hash(req.body.password, 10);
-    }
     next();
   }
 }
