@@ -1,22 +1,23 @@
-# Note Taking API
+# Note API with Authentication
 
-A RESTful API for managing notes and categories built with Express.js, TypeScript, and MongoDB.
+A robust RESTful API for note-taking built with TypeScript, Express, and MongoDB. This API includes user authentication, note management, and category organization features.
 
 ## Features
 
-- Create, read, update, and delete notes
-- Organize notes with categories
-- MongoDB database integration
-- TypeScript support
-- Request validation middleware
-- Comprehensive error handling
+- User authentication (register, login, logout)
+- JWT-based authentication with cookie storage
+- CRUD operations for notes
+- Category management for notes
+- Request validation using Joi
+- Password hashing with bcrypt
 - Request logger middleware
+- Error handling middleware (Errors are handled using throw..catch pattern)
 
 ## Prerequisites
 
 - Node.js (v14 or higher)
 - MongoDB Atlas account or local MongoDB instance
-- npm (or pnpm) package manager
+- npm or pnpm package manager
 
 ## Installation
 
@@ -32,51 +33,87 @@ git clone <repository-url>
 pnpm install
 ```
 
-3. Create a `.env` file in the root directory and add your MongoDB connection string:
+3. Create a `.env` file in the root directory with the following variables:
 
-```plaintext
+```
+PORT=8080
 DATABASE_URL=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
 ```
 
-## Development
+## Running the Application
 
-To start the development server with hot-reload:
+### Development mode
 
 ```bash
-pnpm run dev
+pnpm dev
+```
+
+### Production mode
+
+```bash
+pnpm build
+pnpm start
 ```
 
 The server will start on port 8080 by default. You can change this by setting the `PORT` environment variable.
 
 ## API Endpoints
 
+### Authentication
+
+| Method | Endpoint             | Description             |
+| ------ | -------------------- | ----------------------- |
+| POST   | `/api/auth/register` | Register a new user     |
+| POST   | `/api/auth/login`    | Login and get JWT token |
+
 ### Notes
 
-| Method | Endpoint                          | Description           |
-| ------ | --------------------------------- | --------------------- |
-| GET    | `/api/notes`                      | Get all notes         |
-| GET    | `/api/notes/:noteId`              | Get a specific note   |
-| GET    | `/api/notes/category/:categoryId` | Get notes by category |
-| POST   | `/api/notes`                      | Create a new note     |
-| PATCH  | `/api/notes/:noteId`              | Update a note         |
-| DELETE | `/api/notes/:noteId`              | Delete a note         |
+| Method | Endpoint                          | Description           | Authentication |
+| ------ | --------------------------------- | --------------------- | -------------- |
+| GET    | `/api/notes`                      | Get all notes         | Required       |
+| GET    | `/api/notes/:noteId`              | Get a specific note   | Required       |
+| GET    | `/api/notes/category/:categoryId` | Get notes by category | Required       |
+| POST   | `/api/notes`                      | Create a new note     | Required       |
+| PATCH  | `/api/notes/:noteId`              | Update a note         | Required       |
+| DELETE | `/api/notes/:noteId`              | Delete a note         | Required       |
 
 ### Categories
 
-| Method | Endpoint                      | Description             |
-| ------ | ----------------------------- | ----------------------- |
-| GET    | `/api/categories`             | Get all categories      |
-| GET    | `/api/categories/:categoryId` | Get a specific category |
-| POST   | `/api/categories`             | Create a new category   |
+| Method | Endpoint                      | Description             | Authentication |
+| ------ | ----------------------------- | ----------------------- | -------------- |
+| GET    | `/api/categories`             | Get all categories      | Required       |
+| GET    | `/api/categories/:categoryId` | Get a specific category | Required       |
+| POST   | `/api/categories`             | Create a new category   | Required       |
 
-### Note Schema
+## Data Models
+
+### User Registration Schema/Body
+
+```typescript
+{
+  email: string; // required, unique, lowercase, trimmed
+  password: string; // required, hashed before saving too db
+  name: string; // required
+}
+```
+
+### User Login Schema/Body
+
+```typescript
+{
+  email: string; // required, unique, lowercase, trimmed
+  password: string; // required
+}
+```
+
+### Note Creation Schema/Body
 
 ```typescript
 {
   title: string; // required
   content: string; // required
-  category: string; // optional, references a category ID
-  author: string; // optional
+  category?: string; // The name of category to reference. optional
 }
 ```
 
@@ -84,33 +121,39 @@ The server will start on port 8080 by default. You can change this by setting th
 
 ```typescript
 {
-  name: string; // required, unique
-  description: string; // optional
+  name: string; // required, unique, lowercase, trimmed
+  description?: string; // optional
+  // noteCount: number; // virtual, populated on demand. Not needed/required
 }
 ```
-
-## Build
-
-The project uses TypeScript and compiles to JavaScript in the `build` directory.
 
 ## Project Structure
 
 ```plaintext
-simple-note-api/
+note-api-with-auth/
 ├── build/                # Compiled typescript files
 ├── src/
-│   ├── app.ts           # Application entry point
-│   ├── controllers/     # Request handlers
-│   ├── middleware/      # Custom middleware
-│   ├── models/         # Database models
-│   ├── routes/         # API routes
-│   ├── services/       # Business logic
-│   └── utils/          # Utility functions
-├── tsconfig.json       # TypeScript configuration
-└── package.json        # Project dependencies
+│   ├── app.ts            # Application entry point
+│   ├── controllers/      # Request handlers
+│   ├── middleware/       # Custom middleware
+│   │   ├── auth.middleware.ts    # Authentication middleware
+│   │   ├── error.middleware.ts   # Error handling middleware
+│   │   └── logger.middleware.ts  # Request logging middleware
+│   ├── models/           # Database models
+│   ├── routes/           # API routes
+│   ├── schemas/          # Validation schemas
+│   ├── services/         # Business logic
+│   ├── types/            # TypeScript type definitions
+│   └── utils/            # Utility functions
+├── tsconfig.json         # TypeScript configuration
+└── package.json          # Project dependencies
 ```
 
 ## Error Handling
+
+Express ^5 catches all errors thrown in route handlers and passes them to the error handling middleware. The error handling middleware logs the error and sends a standardized error response to the client.
+
+## Error Response Format
 
 The API uses a standardized error response format:
 
@@ -118,15 +161,13 @@ The API uses a standardized error response format:
 {
   success: boolean;
   message: string;
-  data?: any;
+  error?: any;  // Additional error details (mostly present when Joi validation fails)
 }
 ```
 
-Common HTTP status codes:
+## Authentication Flow
 
-- 200: Success
-- 201: Created
-- 400: Bad Request
-- 404: Not Found
-- 409: Conflict (e.g., duplicate category)
-- 500: Internal Server Error
+1. User registers with email, password, and name
+2. User logs in with email and password
+3. Server validates credentials and returns JWT token in HTTP-only cookie
+4. Protected routes check for valid JWT token in cookies
