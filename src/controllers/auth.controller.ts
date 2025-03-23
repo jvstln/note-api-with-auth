@@ -8,6 +8,14 @@ import { TOKEN_MAXAGE_IN_SECONDS } from "../utils/constants";
 class AuthController {
   async register(req: Request, res: Response) {
     const user = await UserService.createUser(req.body);
+
+    // Log the user in after successful registration
+    const token = createToken({ id: user._id });
+    res.cookie("jwt", token, {
+      secure: true,
+      maxAge: TOKEN_MAXAGE_IN_SECONDS * 1000,
+    });
+
     res.status(201).json({
       success: true,
       message: "User created successfully",
