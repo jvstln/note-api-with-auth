@@ -1,4 +1,5 @@
-import { NoteModel, type INote } from "../models/note.model";
+import NoteModel from "../models/note.model";
+import { INote } from "../types/note.type";
 
 class NoteService {
   async getNotes(filter = {}, projection = {}) {

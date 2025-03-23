@@ -1,4 +1,5 @@
-import { CategoryModel, type ICategory } from "../models/category.model";
+import CategoryModel from "../models/category.model";
+import { ICategory } from "../types/category.type";
 
 class CategoryService {
   async getCategories(filter = {}, projection = {}) {

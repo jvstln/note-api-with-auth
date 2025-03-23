@@ -1,11 +1,5 @@
 import { model, Schema } from "mongoose";
-import { INote } from "./note.model";
-
-export interface ICategory {
-  name: string;
-  description?: string;
-  notes?: Schema.Types.ObjectId[] | INote[];
-}
+import { ICategory } from "../types/category.type";
 
 const categorySchema = new Schema(
   {
@@ -13,7 +7,7 @@ const categorySchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true,
+      unique: [true, "Category name already exists"],
       lowercase: true,
     },
     description: {
@@ -35,4 +29,4 @@ categorySchema.virtual("noteCount", {
   count: true,
 });
 
-export const CategoryModel = model<ICategory>("Category", categorySchema);
+export default model<ICategory>("Category", categorySchema);

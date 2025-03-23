@@ -4,7 +4,8 @@ import cors from "cors";
 
 import indexRoute from "./routes/index.route";
 import { connectToDatabase } from "./utils/db";
-import { requestLogger } from "./middleware/request-logger.middleware";
+import { requestLogger } from "./middleware/logger.middleware";
+import { errorHandler } from "./middleware/error.middleware";
 
 // Get environmental variables
 dotenv.config();
@@ -21,6 +22,10 @@ app.use(requestLogger);
 
 // Routes
 app.use("/api", indexRoute);
+
+// Handle all thrown errors once: This makes it easier to respond to errors by throwing them
+// in the route handlers and letting the error handler take care of them.
+app.use(errorHandler);
 
 // Connect to database and then, start the server
 connectToDatabase(DATABASE_URL)

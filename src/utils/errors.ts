@@ -2,10 +2,12 @@ import { Response } from "express";
 
 export class HTTPError extends Error {
   code: number;
+  error: unknown;
 
-  constructor(code: number, message: string) {
+  constructor(code: number, message: string, error?: unknown) {
     super(message);
     this.code = code;
+    this.error = error;
   }
 }
 

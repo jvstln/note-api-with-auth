@@ -1,12 +1,5 @@
 import { model, Schema } from "mongoose";
-import { ICategory } from "./category.model";
-
-export interface INote {
-  title: string;
-  content: string;
-  author?: string;
-  category?: ICategory | string;
-}
+import { INote } from "../types/note.type";
 
 const noteSchema = new Schema(
   {
@@ -14,8 +7,8 @@ const noteSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      min: 3,
-      max: 75,
+      minLength: 3,
+      maxLength: 75,
     },
     content: {
       type: String,
@@ -34,4 +27,4 @@ const noteSchema = new Schema(
   }
 );
 
-export const NoteModel = model<INote>("Note", noteSchema);
+export default model<INote>("Note", noteSchema);
