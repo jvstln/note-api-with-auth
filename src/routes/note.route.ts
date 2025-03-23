@@ -1,10 +1,8 @@
 import express from "express";
 import NoteController from "../controllers/note.controller";
 import categoryContoller from "../controllers/category.contoller";
-import {
-  validateNote,
-  validatePartialNote,
-} from "../middleware/note-validation.middleware";
+import { createValidationMiddleware } from "../middleware/validation.middleware";
+import { noteSchema, optionalNoteSchema } from "../schemas/note.schema";
 
 const router = express.Router();
 
@@ -15,12 +13,25 @@ router.use(NoteController.validateAndTransformCategory);
 
 router.get("/", NoteController.getNotes);
 router.get("/:noteId", NoteController.getNote);
-router.post("/", validateNote, NoteController.createNote);
+router.post(
+  "/",
+  createValidationMiddleware(noteSchema),
+  NoteController.createNote
+);
 router.delete("/:noteId", NoteController.deleteNote);
-router.patch("/:noteId", validatePartialNote, NoteController.updateNote);
+router.patch(
+  "/:noteId",
+
+  createValidationMiddleware(optionalNoteSchema),
+  NoteController.updateNote
+);
 
 // The correct method for updating is patch.. But am leaving it here for task legacy reasons
-router.put("/:noteId", validatePartialNote, NoteController.updateNote);
+router.put(
+  "/:noteId",
+  createValidationMiddleware(optionalNoteSchema),
+  NoteController.updateNote
+);
 
 router.get(
   "/categories/:categoryId",

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { handleError, HTTPError } from "../utils/errors";
+import { HTTPError } from "../utils/errors";
 import NoteService from "../services/note.service";
 import CategoryService from "../services/category.service";
 

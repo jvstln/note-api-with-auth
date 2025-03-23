@@ -9,10 +9,13 @@ const categorySchema = new Schema(
       trim: true,
       unique: [true, "Category name already exists"],
       lowercase: true,
+      minLength: 3,
+      maxLength: 30,
     },
     description: {
       type: String,
       trim: true,
+      maxLength: 75,
     },
   },
   {

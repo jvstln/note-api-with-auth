@@ -2,7 +2,7 @@ import { ErrorRequestHandler } from "express";
 import { HTTPError } from "../utils/errors";
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.log(err.message, "caught like a pro");
+  console.error("An error occurred: ", err);
 
   if (err instanceof HTTPError) {
     res.status(err.code || 500).json({
@@ -16,6 +16,4 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message: err.message || "Internal server error",
     success: false,
   });
-
-  next();
 };
