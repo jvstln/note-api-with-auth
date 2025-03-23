@@ -1,8 +1,8 @@
 import { Schema } from "mongoose";
-import { INote } from "./note.type";
+import { type NoteBody } from "./note.type";
 
-export interface ICategory {
+export interface Category {
   name: string;
   description?: string;
-  notes?: Schema.Types.ObjectId[] | INote[];
+  notes?: Schema.Types.ObjectId[] | NoteBody[];
 }

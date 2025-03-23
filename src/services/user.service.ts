@@ -1,5 +1,5 @@
 import UserModel from "../models/user.model";
-import { User, UserRegister } from "../types/user.type";
+import { type UserRegister } from "../types/user.type";
 import bcrypt from "bcrypt";
 
 class UserService {
@@ -7,7 +7,7 @@ class UserService {
     return UserModel.find();
   }
 
-  async getUser(id: string): Promise<User | null> {
+  async getUser(id: string) {
     return UserModel.findById(id);
   }
 

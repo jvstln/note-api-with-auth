@@ -16,7 +16,7 @@ export const handleAuthentication = async (
     throw new HTTPError(401, "Unauthenticated! Invalid token");
   }
 
-  const user = await UserService.getUser(validatedToken.id);
+  const user = (await UserService.getUser(validatedToken.id))?.toObject();
   if (!user) throw new HTTPError(401, "Non existing user logged in");
 
   // Added global type guard in ./src/types/custom.d.ts for this to work

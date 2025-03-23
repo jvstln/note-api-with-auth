@@ -8,14 +8,13 @@ const noteRouter = express.Router();
 
 // Param middleware to validate note existence if id exists
 noteRouter.param("noteId", NoteController.validateNoteExistence);
-// Middleware to validate and transform category from name to _id
-noteRouter.use(NoteController.validateAndTransformCategory);
 
 noteRouter.get("/", NoteController.getNotes);
 noteRouter.get("/:noteId", NoteController.getNote);
 noteRouter.post(
   "/",
   createValidationMiddleware(noteSchema),
+  NoteController.validateAndTransformCategory,
   NoteController.createNote
 );
 noteRouter.delete("/:noteId", NoteController.deleteNote);
@@ -23,6 +22,7 @@ noteRouter.patch(
   "/:noteId",
 
   createValidationMiddleware(optionalNoteSchema),
+  NoteController.validateAndTransformCategory,
   NoteController.updateNote
 );
 
@@ -30,6 +30,7 @@ noteRouter.patch(
 noteRouter.put(
   "/:noteId",
   createValidationMiddleware(optionalNoteSchema),
+  NoteController.validateAndTransformCategory,
   NoteController.updateNote
 );
 

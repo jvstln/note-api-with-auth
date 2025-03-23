@@ -1,5 +1,5 @@
 import CategoryModel from "../models/category.model";
-import { ICategory } from "../types/category.type";
+import { type Category } from "../types/category.type";
 
 class CategoryService {
   async getCategories(filter = {}, projection = {}) {
@@ -14,7 +14,7 @@ class CategoryService {
     return CategoryModel.findOne({ name });
   }
 
-  async createCategory(data: ICategory) {
+  async createCategory(data: Category) {
     return CategoryModel.create(data);
   }
 

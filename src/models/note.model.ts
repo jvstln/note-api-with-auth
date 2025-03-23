@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { INote } from "../types/note.type";
+import { type Note } from "../types/note.type";
 
 const noteSchema = new Schema(
   {
@@ -15,7 +15,9 @@ const noteSchema = new Schema(
       required: true,
     },
     author: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     category: {
       type: Schema.Types.ObjectId,
@@ -27,4 +29,4 @@ const noteSchema = new Schema(
   }
 );
 
-export default model<INote>("Note", noteSchema);
+export default model<Note>("Note", noteSchema);

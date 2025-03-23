@@ -5,7 +5,7 @@ import CategoryService from "../services/category.service";
 
 class NoteController {
   async getNotes(req: Request, res: Response) {
-    const allNotes = await NoteService.getNotes();
+    const allNotes = await NoteService.getNotes({ author: req.user?._id });
     res.json({
       success: true,
       message: "Notes retrieved successfully",
@@ -15,6 +15,7 @@ class NoteController {
 
   async getNotesByCategory(req: Request, res: Response) {
     const allNotes = await NoteService.getNotes({
+      author: req.user?._id,
       category: req.params.categoryId,
     });
     res.json({
@@ -26,7 +27,6 @@ class NoteController {
 
   async getNote(req: Request, res: Response) {
     const note = await NoteService.getNote(req.params.noteId);
-    if (!note) throw new HTTPError(404, "Note not found");
 
     res.json({
       success: true,
@@ -36,7 +36,11 @@ class NoteController {
   }
 
   async createNote(req: Request, res: Response) {
-    const newNote = await NoteService.createNote(req.body);
+    if (!req.user) throw new HTTPError(401, "Unauthorized user");
+
+    const notePayload = { ...req.body, author: req.user._id };
+
+    const newNote = await NoteService.createNote(notePayload);
     res.status(201).json({
       success: true,
       message: "Note created successfully",
@@ -71,8 +75,20 @@ class NoteController {
       throw new HTTPError(400, "Invalid note id");
     }
 
-    const note = await NoteService.exists(req.params.noteId);
+    const note = await NoteService.getNote(req.params.noteId);
     if (!note) throw new HTTPError(404, "Note not found");
+
+    if (
+      !note ||
+      !note.author ||
+      note.author._id.toString() !== req.user?._id.toString()
+    ) {
+      throw new HTTPError(
+        401,
+        "Unauthorized! Note does not belong to current user"
+      );
+    }
+
     next();
   }
 
@@ -81,7 +97,7 @@ class NoteController {
     res: Response,
     next: Function
   ) {
-    if (req.body && "category" in req.body && req.method !== "DELETE") {
+    if (req.body && "category" in req.body) {
       const category = await CategoryService.getCategoryByName(
         req.body.category
       );

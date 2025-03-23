@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-const userModel = new Schema({
+const userSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -19,4 +19,10 @@ const userModel = new Schema({
   },
 });
 
-export default model("User", userModel);
+userSchema.virtual("notes", {
+  ref: "Note",
+  localField: "_id",
+  foreignField: "author",
+});
+
+export default model("User", userSchema);

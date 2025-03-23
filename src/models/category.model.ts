@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { ICategory } from "../types/category.type";
+import { type Category } from "../types/category.type";
 
 const categorySchema = new Schema(
   {
@@ -32,4 +32,4 @@ categorySchema.virtual("noteCount", {
   count: true,
 });
 
-export default model<ICategory>("Category", categorySchema);
+export default model<Category>("Category", categorySchema);
